@@ -1,0 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Syne:wght@700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap');
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-dark: #09090B;
+    --neon-lime: #D2F827;
+  }
+
+  body {
+    background-color: var(--bg-dark);
+    color: #FFFFFF;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+}
+
+.font-syne {
+  font-family: 'Syne', sans-serif;
+}
+
+/* Fluid Scaler container: expands cleanly on 1440p, 2K & 4K */
+.app-container {
+  width: 100%;
+  max-width: clamp(1200px, 92vw, 2400px);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Heading clamp engine */
+.hero-headline {
+  font-size: clamp(2rem, 5vw, 5.2rem);
+  line-height: 1.05;
+}
+
+/* Custom Neon & Charcoal Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #09090B;
+}
+::-webkit-scrollbar-thumb {
+  background: #24242A;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #D2F827;
+}

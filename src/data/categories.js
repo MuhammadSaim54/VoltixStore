@@ -1,0 +1,1 @@
+export const NAV_CATEGORIES = ['All', 'Men', 'Women', 'Gadgets', 'Bags'];
