@@ -9,6 +9,8 @@ import MobileBottomNav from './components/MobileBottomNav';
 import QuickViewModal from './components/QuickViewModal';
 import WishlistDrawer from './components/WishlistDrawer';
 import CartDrawer from './components/CartDrawer';
+import CheckoutModal from './components/CheckoutModal';
+import OrderSuccessModal from './components/OrderSuccessModal';
 
 import HomeViewport from './components/viewports/HomeViewport';
 import ProductsViewport from './components/viewports/ProductsViewport';
@@ -23,13 +25,17 @@ export default function App() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   
-  // Cart & Wishlist & Promo State
+  // Cart & Wishlist State
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [appliedCoupon, setAppliedCoupon] = useState('');
   const [wishlistIds, setWishlistIds] = useState(new Set());
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   
+  // Checkout & Order Confirmation State
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [confirmedOrder, setConfirmedOrder] = useState(null);
+
   const [toastMessage, setToastMessage] = useState(null);
   const [quickViewData, setQuickViewData] = useState(null);
 
@@ -53,6 +59,15 @@ export default function App() {
   const totalCartCount = useMemo(() => {
     return cart.reduce((acc, item) => acc + (item.quantity || 1), 0);
   }, [cart]);
+
+  // Real-time Pricing Hierarchy for Checkout
+  const cartSubtotal = useMemo(() => {
+    return cart.reduce((acc, item) => acc + item.price * (item.quantity || 1), 0);
+  }, [cart]);
+
+  const discountAmount = appliedCoupon === 'VOLT40' ? cartSubtotal * 0.4 : 0;
+  const shipping = cartSubtotal >= 250 || cartSubtotal === 0 ? 0 : 15.0;
+  const grandTotal = Math.max(0, cartSubtotal - discountAmount + shipping);
 
   const handleAddToCart = useCallback((product, variant, qty = 1) => {
     const activeVar = variant || product.variants?.[0];
@@ -119,12 +134,22 @@ export default function App() {
     });
   }, []);
 
-  // Promo card claim triggers coupon inside cart automatically
   const handleClaimOffer = () => {
     setAppliedCoupon('VOLT40');
     setIsCartOpen(true);
     setToastMessage('🎉 VOLT40 applied! 40% discount activated in cart.');
     setTimeout(() => setToastMessage(null), 3500);
+  };
+
+  const handleOrderComplete = (orderData) => {
+    setIsCheckoutOpen(false);
+    setConfirmedOrder(orderData);
+  };
+
+  const handleResetCart = () => {
+    setCart([]);
+    setAppliedCoupon('');
+    setConfirmedOrder(null);
   };
 
   if (showLanding) {
@@ -196,7 +221,7 @@ export default function App() {
         onRemoveFromWishlist={handleToggleWishlist}
       />
 
-      {/* Spacious Studio Cart Drawer */}
+      {/* Studio Cart Drawer with Real Checkout Trigger */}
       <CartDrawer
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
@@ -205,7 +230,29 @@ export default function App() {
         onRemoveItem={handleRemoveFromCart}
         appliedCoupon={appliedCoupon}
         onApplyCoupon={setAppliedCoupon}
-        onCheckout={() => alert('Proceeding to 256-Bit Encrypted Checkout Gateway!')}
+        onCheckout={() => {
+          setIsCartOpen(false);
+          setIsCheckoutOpen(true);
+        }}
+      />
+
+      {/* 256-Bit Encrypted Multi-Step Checkout Modal */}
+      <CheckoutModal
+        isOpen={isCheckoutOpen}
+        onClose={() => setIsCheckoutOpen(false)}
+        cartItems={cart}
+        subtotal={cartSubtotal}
+        discountAmount={discountAmount}
+        shipping={shipping}
+        grandTotal={grandTotal}
+        onOrderComplete={handleOrderComplete}
+      />
+
+      {/* Hologram Dispatch Confirmation Modal */}
+      <OrderSuccessModal
+        orderData={confirmedOrder}
+        onClose={() => setConfirmedOrder(null)}
+        onResetCart={handleResetCart}
       />
 
       {/* Responsive PDP QuickView Modal */}
@@ -225,7 +272,7 @@ export default function App() {
             initial={{ opacity: 0, y: 40, scale: 0.92 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.92 }}
-            className="fixed bottom-20 sm:bottom-8 right-4 sm:right-8 z-[110] bg-[#0E0E14]/95 backdrop-blur-2xl border border-[#D2F827]/60 shadow-[0_20px_50px_rgba(0,0,0,0.95)] p-3.5 rounded-2xl flex items-center gap-3 text-white max-w-sm"
+            className="fixed bottom-20 sm:bottom-8 right-4 sm:right-8 z-[200] bg-[#0E0E14]/95 backdrop-blur-2xl border border-[#D2F827]/60 shadow-[0_20px_50px_rgba(0,0,0,0.95)] p-3.5 rounded-2xl flex items-center gap-3 text-white max-w-sm"
           >
             <div className="w-7 h-7 rounded-xl bg-[#D2F827] text-[#050507] flex items-center justify-center font-bold flex-shrink-0 shadow-md">
               <Check className="w-3.5 h-3.5 stroke-[3]" />

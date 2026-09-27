@@ -45,7 +45,7 @@ export default memo(function CartDrawer({
   const handleApplyPromo = (e) => {
     e.preventDefault();
     if (promoInput.trim().toUpperCase() === 'VOLT40') {
-      onApplyCoupon('VOLT40');
+      if (onApplyCoupon) onApplyCoupon('VOLT40');
       setPromoError('');
     } else {
       setPromoError('Invalid coupon. Try VOLT40');
@@ -67,7 +67,7 @@ export default memo(function CartDrawer({
           transition={{ type: 'spring', damping: 30, stiffness: 300 }}
           className="w-full max-w-[440px] bg-[#0A0A0D] border-l border-white/[0.08] h-full flex flex-col justify-between shadow-2xl relative z-10 select-none"
         >
-          {/* 1. Header (Clean English) */}
+          {/* 1. Header */}
           <div className="px-6 pt-6 pb-4 flex items-center justify-between border-b border-white/[0.06] flex-shrink-0">
             <h2 className="font-syne font-bold text-xl text-white tracking-tight">
               Shopping Cart
@@ -259,7 +259,10 @@ export default memo(function CartDrawer({
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.98 }}
                 type="button"
-                onClick={onCheckout}
+                onClick={() => {
+                  onClose();
+                  if (onCheckout) onCheckout();
+                }}
                 className="w-full py-3.5 rounded-xl bg-[#D2F827] hover:bg-[#c2e822] text-[#0A0A0D] font-syne font-black text-sm tracking-wider uppercase transition-all shadow-[0_0_25px_rgba(210,248,39,0.3)] flex items-center justify-center gap-2 cursor-pointer mt-2"
               >
                 <span>Proceed to Checkout</span>
