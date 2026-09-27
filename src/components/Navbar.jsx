@@ -13,7 +13,7 @@ export default memo(function Navbar({
   const navTabs = ['HOME', 'PRODUCTS', 'ABOUT', 'SUPPORT'];
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-[#070709]/95 backdrop-blur-2xl border-b border-white/[0.08] shadow-[0_10px_35px_rgba(0,0,0,0.9)] px-4 sm:px-8 xl:px-12 py-3 transition-all">
+    <header className="fixed top-0 left-0 right-0 z-50 w-full bg-[#070709]/95 backdrop-blur-2xl border-b border-white/[0.08] shadow-[0_10px_35px_rgba(0,0,0,0.9)] px-4 sm:px-8 xl:px-12 py-3 transition-all">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
         
         {/* Brand */}

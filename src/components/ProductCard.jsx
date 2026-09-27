@@ -1,6 +1,7 @@
 import React, { memo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ShoppingBag, Star, Heart, Eye } from 'lucide-react';
+import SafeImage from './SafeImage';
 
 export default memo(function ProductCard({ 
   product, 
@@ -49,7 +50,7 @@ export default memo(function ProductCard({
       className="relative rounded-[28px] bg-gradient-to-b from-[#0D0D12] via-[#09090D] to-[#050507] border border-white/[0.06] hover:border-[#D2F827]/60 p-3.5 sm:p-5 flex flex-col justify-between group shadow-[0_15px_35px_rgba(0,0,0,0.95)] hover:shadow-[0_25px_60px_rgba(0,0,0,0.99),0_0_25px_rgba(210,248,39,0.14)] transition-all duration-500 w-full will-change-transform"
     >
       <div>
-        {/* Clickable Image Box with Smooth Glow */}
+        {/* Clickable Image Box with Safe Image Loader */}
         <div 
           onClick={() => onQuickView(product, selectedVariantIndex)}
           className="relative aspect-square w-full rounded-2xl bg-[#040406] overflow-hidden flex items-center justify-center p-3 border border-white/[0.04] cursor-pointer"
@@ -92,12 +93,11 @@ export default memo(function ProductCard({
             <span>QUICK VIEW</span>
           </div>
 
-          <img 
+          <SafeImage 
             key={activeVariant?.image}
             src={activeVariant?.image} 
             alt={product.name} 
             className="w-full h-full object-cover rounded-xl transition-all duration-700 group-hover:scale-105" 
-            loading="lazy"
           />
         </div>
 
