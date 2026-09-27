@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowUpRight, Sparkles, Compass } from 'lucide-react';
+import { ArrowUpRight, Compass } from 'lucide-react';
 
 const CATEGORY_ITEMS = [
   {
@@ -40,8 +40,7 @@ const CATEGORY_ITEMS = [
 export default memo(function PopularCategories({ onSelectCategory }) {
   return (
     <section className="space-y-6 sm:space-y-8">
-      
-      {/* Header with Dual Tone Indicator */}
+      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-white/[0.07] pb-4">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#D2F827]/10 border border-[#D2F827]/30 text-[#D2F827] text-[10px] font-mono font-bold uppercase tracking-wider mb-2">
@@ -66,7 +65,7 @@ export default memo(function PopularCategories({ onSelectCategory }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1, duration: 0.5 }}
             whileHover={{ y: -8, scale: 1.01 }}
-            onClick={() => onSelectCategory(item.id)}
+            onClick={() => onSelectCategory && onSelectCategory(item.id)}
             className="relative overflow-hidden rounded-[32px] bg-gradient-to-b from-[#16161D] via-[#111116] to-[#0A0A0D] border border-white/[0.08] hover:border-[#D2F827]/60 p-5 sm:p-6 shadow-[0_15px_40px_rgba(0,0,0,0.7)] group cursor-pointer transition-all duration-300"
           >
             {/* Hover Background Radial Glow */}
@@ -76,7 +75,6 @@ export default memo(function PopularCategories({ onSelectCategory }) {
             />
 
             <div className="flex items-center justify-between gap-4 relative z-10">
-              
               {/* Category Details */}
               <div className="space-y-3 min-w-0 flex-1">
                 <span className="inline-block px-2.5 py-1 rounded-lg bg-white/[0.04] border border-white/[0.08] text-[9.5px] font-mono font-bold text-[#A1A1AA] tracking-wider uppercase">
@@ -98,7 +96,7 @@ export default memo(function PopularCategories({ onSelectCategory }) {
                 </div>
               </div>
 
-              {/* Capsule Curved Picture Window (image_88ebb7.png Reference) */}
+              {/* Capsule Curved Picture Window */}
               <div className="relative w-20 sm:w-24 h-32 sm:h-36 rounded-[28px] overflow-hidden border border-white/[0.12] flex-shrink-0 group-hover:scale-105 group-hover:border-[#D2F827]/70 transition-all duration-500 shadow-xl">
                 <img 
                   src={item.image} 
@@ -111,12 +109,10 @@ export default memo(function PopularCategories({ onSelectCategory }) {
                   <span className="w-6 h-1 rounded-full bg-white/40 group-hover:bg-[#D2F827] transition-colors" />
                 </div>
               </div>
-
             </div>
           </motion.div>
         ))}
       </div>
-
     </section>
   );
 });
