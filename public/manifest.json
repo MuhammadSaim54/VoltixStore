@@ -1,0 +1,19 @@
+{
+  "short_name": "Voltix",
+  "name": "Voltix // Cybernetic Luxury Hardware Studio",
+  "description": "Next-generation aerospace-grade titanium wearables, planar acoustics, and tactical cyber streetwear.",
+  "icons": [
+    {
+      "src": "/voltix-logo.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#040407",
+  "theme_color": "#D2F827",
+  "display": "standalone",
+  "orientation": "portrait",
+  "categories": ["shopping", "technology", "lifestyle"]
+}

@@ -1,13 +1,71 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>voltix-store</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    
+    <!-- Primary SEO Meta -->
+    <title>VOLTIX // Apex Cybernetic Luxury Hardware & Tactical Apparel</title>
+    <meta name="title" content="VOLTIX // Apex Cybernetic Luxury Hardware & Tactical Apparel" />
+    <meta name="description" content="Mil-spec titanium wearables, 15ms ultra-low latency planar acoustics, and tactical weatherproof streetwear designed for elite creators." />
+    <meta name="theme-color" content="#D2F827" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <!-- Open Graph / Meta Protocol -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://voltix-gear.com/" />
+    <meta property="og:title" content="VOLTIX // Cybernetic Luxury Hardware Studio" />
+    <meta property="og:description" content="Dominate reality with aerospace Grade-5 titanium acoustics, biometric wearables, and tactical everyday carry." />
+    <meta property="og:image" content="/voltix-logo.svg" />
+
+    <!-- PWA & Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/voltix-logo.svg" />
+    <link rel="apple-touch-icon" href="/voltix-logo.svg" />
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- Typography: Syne, Space Grotesk & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800;900&display=swap" rel="stylesheet" />
+
+    <style>
+      body {
+        margin: 0;
+        background-color: #040407;
+        color: #ffffff;
+        font-family: 'Space Grotesk', sans-serif;
+        overflow-x: hidden;
+      }
+      /* Custom Luxury Scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #040407;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(210, 248, 39, 0.25);
+        border-radius: 9999px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #D2F827;
+      }
+    </style>
   </head>
-  <body>
+  <body class="bg-[#040407] text-white antialiased selection:bg-[#D2F827]/30 selection:text-[#D2F827]">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    
+    <!-- PWA Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then(reg => console.log('⚡ Voltix Service Worker Operational:', reg.scope))
+            .catch(err => console.error('❌ Service Worker Error:', err));
+        });
+      }
+    </script>
   </body>
 </html>
