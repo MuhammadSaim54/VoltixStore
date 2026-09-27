@@ -8,6 +8,7 @@ import Navbar from './components/Navbar';
 import MobileBottomNav from './components/MobileBottomNav';
 import QuickViewModal from './components/QuickViewModal';
 import WishlistDrawer from './components/WishlistDrawer';
+import CartDrawer from './components/CartDrawer';
 
 import HomeViewport from './components/viewports/HomeViewport';
 import ProductsViewport from './components/viewports/ProductsViewport';
@@ -21,9 +22,14 @@ export default function App() {
   const [activeViewport, setActiveViewport] = useState('HOME');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+  
+  // Cart & Wishlist & Promo State
   const [cart, setCart] = useState([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [appliedCoupon, setAppliedCoupon] = useState('');
   const [wishlistIds, setWishlistIds] = useState(new Set());
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
+  
   const [toastMessage, setToastMessage] = useState(null);
   const [quickViewData, setQuickViewData] = useState(null);
 
@@ -40,16 +46,62 @@ export default function App() {
     });
   }, [selectedCategory, searchQuery]);
 
-  // Wishlist products array
   const wishlistProducts = useMemo(() => {
     return PRODUCTS.filter((p) => wishlistIds.has(p.id));
   }, [wishlistIds]);
 
-  const handleAddToCart = useCallback((product, variant) => {
+  const totalCartCount = useMemo(() => {
+    return cart.reduce((acc, item) => acc + (item.quantity || 1), 0);
+  }, [cart]);
+
+  const handleAddToCart = useCallback((product, variant, qty = 1) => {
     const activeVar = variant || product.variants?.[0];
-    setCart((prev) => [...prev, { ...product, selectedVariant: activeVar, cartId: Date.now() }]);
-    setToastMessage(`⚡ "${product.name}" added to cart!`);
+    
+    setCart((prev) => {
+      const existingIndex = prev.findIndex(
+        (item) => item.id === product.id && item.selectedVariant?.name === activeVar.name
+      );
+
+      if (existingIndex > -1) {
+        const next = [...prev];
+        next[existingIndex] = {
+          ...next[existingIndex],
+          quantity: (next[existingIndex].quantity || 1) + qty
+        };
+        return next;
+      }
+
+      return [
+        ...prev,
+        {
+          ...product,
+          selectedVariant: activeVar,
+          quantity: qty,
+          cartId: Date.now() + Math.random()
+        }
+      ];
+    });
+
+    setToastMessage(`⚡ Added ${qty > 1 ? `${qty}x ` : ''}"${product.name}" to cart!`);
     setTimeout(() => setToastMessage(null), 3500);
+  }, []);
+
+  const handleUpdateCartQuantity = useCallback((cartId, newQty) => {
+    if (newQty <= 0) {
+      setCart((prev) => prev.filter((item) => item.cartId !== cartId));
+    } else {
+      setCart((prev) =>
+        prev.map((item) =>
+          item.cartId === cartId ? { ...item, quantity: newQty } : item
+        )
+      );
+    }
+  }, []);
+
+  const handleRemoveFromCart = useCallback((cartId) => {
+    setCart((prev) => prev.filter((item) => item.cartId !== cartId));
+    setToastMessage('🗑️ Item removed from cart');
+    setTimeout(() => setToastMessage(null), 2500);
   }, []);
 
   const handleToggleWishlist = useCallback((product) => {
@@ -67,9 +119,11 @@ export default function App() {
     });
   }, []);
 
+  // Promo card claim triggers coupon inside cart automatically
   const handleClaimOffer = () => {
-    navigator.clipboard?.writeText('VOLT40');
-    setToastMessage('🎉 Code VOLT40 Copied! 40% discount applied to checkout.');
+    setAppliedCoupon('VOLT40');
+    setIsCartOpen(true);
+    setToastMessage('🎉 VOLT40 applied! 40% discount activated in cart.');
     setTimeout(() => setToastMessage(null), 3500);
   };
 
@@ -78,17 +132,16 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#050507] text-white flex flex-col font-sans selection:bg-[#D2F827]/30 selection:text-[#D2F827] pb-28 sm:pb-16 relative overflow-x-hidden">
+    <div className="min-h-screen bg-[#050507] text-white flex flex-col font-sans selection:bg-[#D2F827]/30 selection:text-[#D2F827] pb-28 sm:pb-16 relative overflow-x-hidden pt-20">
       
       <CyberIllustrations />
 
-      {/* Global Navbar */}
+      {/* Rock-Solid Fixed Navbar */}
       <Navbar
         activeTab={activeViewport}
         onTabChange={setActiveViewport}
-        onOpenLanding={() => setShowLanding(true)}
-        cartCount={cart.length}
-        onOpenCart={() => alert(`Cart items: ${cart.length}. Cart Drawer opens in Phase 4!`)}
+        cartCount={totalCartCount}
+        onOpenCart={() => setIsCartOpen(true)}
         wishlistCount={wishlistIds.size}
         onOpenWishlist={() => setIsWishlistOpen(true)}
       />
@@ -129,13 +182,12 @@ export default function App() {
         {activeViewport === 'SUPPORT' && <SupportViewport />}
       </main>
 
-      {/* Mobile Bottom Nav */}
       <MobileBottomNav
         activeTab={activeViewport}
         onTabChange={setActiveViewport}
       />
 
-      {/* Dedicated Wishlist Drawer Viewer */}
+      {/* Saved Wishlist Drawer */}
       <WishlistDrawer
         isOpen={isWishlistOpen}
         onClose={() => setIsWishlistOpen(false)}
@@ -144,7 +196,19 @@ export default function App() {
         onRemoveFromWishlist={handleToggleWishlist}
       />
 
-      {/* Quick View Modal */}
+      {/* Spacious Studio Cart Drawer */}
+      <CartDrawer
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        cartItems={cart}
+        onUpdateQuantity={handleUpdateCartQuantity}
+        onRemoveItem={handleRemoveFromCart}
+        appliedCoupon={appliedCoupon}
+        onApplyCoupon={setAppliedCoupon}
+        onCheckout={() => alert('Proceeding to 256-Bit Encrypted Checkout Gateway!')}
+      />
+
+      {/* Responsive PDP QuickView Modal */}
       <QuickViewModal
         product={quickViewData?.product}
         initialVariantIndex={quickViewData?.variantIndex}
@@ -154,14 +218,14 @@ export default function App() {
         onAddToCart={handleAddToCart}
       />
 
-      {/* Toast Notification */}
+      {/* Global Toast */}
       <AnimatePresence>
         {toastMessage && (
           <motion.div
             initial={{ opacity: 0, y: 40, scale: 0.92 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.92 }}
-            className="fixed bottom-20 sm:bottom-8 right-4 sm:right-8 z-50 bg-[#0E0E14]/95 backdrop-blur-2xl border border-[#D2F827]/60 shadow-[0_20px_50px_rgba(0,0,0,0.95)] p-3.5 rounded-2xl flex items-center gap-3 text-white max-w-sm"
+            className="fixed bottom-20 sm:bottom-8 right-4 sm:right-8 z-[110] bg-[#0E0E14]/95 backdrop-blur-2xl border border-[#D2F827]/60 shadow-[0_20px_50px_rgba(0,0,0,0.95)] p-3.5 rounded-2xl flex items-center gap-3 text-white max-w-sm"
           >
             <div className="w-7 h-7 rounded-xl bg-[#D2F827] text-[#050507] flex items-center justify-center font-bold flex-shrink-0 shadow-md">
               <Check className="w-3.5 h-3.5 stroke-[3]" />
